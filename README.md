@@ -4,7 +4,7 @@ Machine learning tools and frameworks that are mostly built on sklearn and other
 
 ## Guiding principles
 
-- __User friendliness.__ Keras is an API designed for human beings. Whitebox follows best practices for reducing cognitive load and eliminates the need for boiler-plate code: it offers consistent & simple APIs, it minimizes the number of user actions required for common use cases, and it provides clear and actionable feedback upon user error.
+- __User friendliness.__ Whitebox is an API designed for human beings. Whitebox follows best practices for reducing cognitive load and eliminates the need for boiler-plate code: it offers consistent & simple APIs, it minimizes the number of user actions required for common use cases, and it provides clear and actionable feedback upon user error.
 
 - __Modularity.__ Whitebox aims to provide cogs that implement a consistent API which can be arbitrarily pieces together in order to provide ultimate flexibility.
 
