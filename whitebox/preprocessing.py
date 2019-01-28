@@ -2,7 +2,7 @@
   --------------------------------------------------
   File Name : preprocessing.py
   Creation Date : 26-05-2018
-  Last Modified : Sat 26 May 2018 12:30:49 PM EEST
+  Last Modified : 2019-01-28 Mon 02:15 pm
   Created By : Joonatan Samuel
   --------------------------------------------------
 """
@@ -13,7 +13,7 @@ from sklearn_pandas import DataFrameMapper
 from sklearn.preprocessing import MultiLabelBinarizer
 from sklearn.preprocessing import StandardScaler
 
-from utils import *
+from .utils import *
 from sklearn.base import BaseEstimator, TransformerMixin
 
 class Mapper(DataFrameMapper):
