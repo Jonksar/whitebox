@@ -2,7 +2,7 @@
   --------------------------------------------------
   File Name : nlp.py
   Creation Date : 18-05-2018
-  Last Modified : Sat 26 May 2018 10:11:41 AM EEST
+  Last Modified : 2019-08-18 Sun 02:27 pm
   Created By : Joonatan Samuel
   --------------------------------------------------
 """
@@ -20,7 +20,57 @@ from annoy import AnnoyIndex
 
 from os.path import expanduser, join
 
+from sklearn.cluster import KMeans
+from sklearn.metrics import pairwise_distances_argmin_min
+from nltk.tokenize import sent_tokenize
+from enum import Enum
+from skipthoughts import skipthoughts
 
+class SummarizationLengthStrategy(Enum):
+    EXPONENTIAL = 1
+    LINEAR = 2
+
+
+class ExtractiveSummarization:
+    def __init__(self):
+        self._download_pretrained()
+
+        # You would need to download pre-trained models first
+        self.model = skipthoughts.load_model()
+        self.encoder = skipthoughts.Encoder(self.model)
+
+    def _download_pretrained(self):
+        skipthoughts.download_pretrained_skipthoughs()
+
+    def summarize(self, text, language="english", amount=0.5, length_strategy=SummarizationLengthStrategy.EXPONENTIAL):
+        assert 0. < amount < 1., "Amount should be between 0 and 1"
+
+        # Get the sentences
+        sentences = sent_tokenize(text, language=language)
+        # Find vectors
+        encoded = self.encoder.encode(sentences)
+
+        # Finding amount of sentences based on the strategy
+        if length_strategy == SummarizationLengthStrategy.EXPONENTIAL:
+            n_clusters = int(np.ceil(len(encoded) ** amount))
+        elif length_strategy == SummarizationLengthStrategy.LINEAR:
+            n_clusters = int(np.ceil(len(encoded) * amount))
+        else:
+            raise AttributeError("Summarization strategy not supported")
+
+        # Train clustering algorithm
+        kmeans = KMeans(n_clusters=n_clusters)
+        kmeans.fit(encoded)
+
+        avg = []
+        for j in range(n_clusters):
+            idx = np.where(kmeans.labels_ == j)[0]
+            avg.append(np.mean(idx))
+        closest, _ = pairwise_distances_argmin_min(kmeans.cluster_centers_, encoded)
+        ordering = sorted(range(n_clusters), key=lambda k: avg[k])
+        summary = ' '.join([sentences[closest[idx]] for idx in ordering])
+
+        return summary
 
 class Embedding(object):
     def __init__(self):
