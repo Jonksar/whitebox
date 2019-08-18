@@ -1,0 +1,3 @@
+[submodule "whitebox/skipthoughts"]
+	path = whitebox/skipthoughts
+	url = git@github.com:Jonksar/skip-thoughts.git
