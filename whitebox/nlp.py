@@ -2,7 +2,7 @@
   --------------------------------------------------
   File Name : nlp.py
   Creation Date : 18-05-2018
-  Last Modified : 2019-08-18 Sun 02:27 pm
+  Last Modified : 2019-08-18 Sun 02:55 pm
   Created By : Joonatan Samuel
   --------------------------------------------------
 """
@@ -24,7 +24,7 @@ from sklearn.cluster import KMeans
 from sklearn.metrics import pairwise_distances_argmin_min
 from nltk.tokenize import sent_tokenize
 from enum import Enum
-from skipthoughts import skipthoughts
+from .skipthoughts import skipthoughts
 
 class SummarizationLengthStrategy(Enum):
     EXPONENTIAL = 1
