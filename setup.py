@@ -2,7 +2,7 @@
   --------------------------------------------------
   File Name : setup.py
   Creation Date : 2019-01-21 Mon 02:33 pm
-  Last Modified : 2019-01-28 Mon 04:20 pm
+  Last Modified : 2019-08-18 Sun 02:30 pm
   Created By : Joonatan Samuel
   --------------------------------------------------
 """
@@ -26,5 +26,7 @@ setup(
         "imageio",
         "sklearn",
         "sklearn_pandas",
+        "gensim",
+        "annoy",
     ]
 )
