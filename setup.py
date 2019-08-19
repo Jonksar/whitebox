@@ -28,5 +28,6 @@ setup(
         "sklearn_pandas",
         "gensim",
         "annoy",
+        "wget",
     ]
 )
