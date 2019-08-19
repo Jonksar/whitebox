@@ -20,6 +20,23 @@ from annoy import AnnoyIndex
 
 from os.path import expanduser, join
 
+import skipthoughts
+import re
+
+import theano
+import theano.tensor as tensor
+
+import pickle as pkl
+import numpy as np
+import copy
+import nltk
+import scipy
+
+from collections import OrderedDict, defaultdict
+from scipy.linalg import norm
+from nltk.tokenize import word_tokenize
+from sklearn.cluster import KMeans
+from sklearn.metrics import pairwise_distances_argmin_min
 
 
 class Embedding(object):
@@ -94,3 +111,58 @@ class Embedding(object):
     def inverse_transform(self, X):
         pass
 
+
+class ExtractiveSummarization():
+    def __init__(self):
+
+        OUT_DIR = os.path.expanduser('~/.whitebox')
+
+        #print('Downloading the model files and word embeddings...')
+        #dictionary_txt= wget.download("http://www.cs.toronto.edu/~rkiros/models/dictionary.txt", out = OUT_DIR)
+        #utable = wget.download("http://www.cs.toronto.edu/~rkiros/models/utable.npy", out = OUT_DIR)
+        #btable = wget.download("http://www.cs.toronto.edu/~rkiros/models/btable.npy", out = OUT_DIR)
+        #uniskip = wget.download("http://www.cs.toronto.edu/~rkiros/models/uni_skip.npz", out = OUT_DIR)
+        #uniskip_pkl = wget.download("http://www.cs.toronto.edu/~rkiros/models/uni_skip.npz.pkl", out = OUT_DIR)
+        #biskip = wget.download("http://www.cs.toronto.edu/~rkiros/models/bi_skip.npz", out = OUT_DIR)
+        #biskip_pkl = wget.download("http://www.cs.toronto.edu/~rkiros/models/bi_skip.npz.pkl", out = OUT_DIR)
+
+
+        self.model = skipthoughts.load_model()
+        self.encoder = skipthoughs.Encoder(self.model)
+
+    def preprocess_clean(self, text):
+        text = text.replace('\n', '')
+        text = re.sub(r'\xa0', ' ', text)
+        text = re.sub(r'\\', ' ', text)
+        text = re.sub(r'[[0-9]]', ' ', text)
+        return text
+
+    def tokenize(self, text):
+        sentences = nltk.sent_tokenize(text)
+        return sentences
+
+    def skipthoughts_encode(self, sentences):
+        return self.encoder.encode(sentences)
+
+    def summarize(self, text):
+        text = preprocess_clean(text) #Clean odd characters
+        summary = []
+        print('Splitting into sentences...')
+        sentences = self.tokenize(text)
+        print('Starting to encode...')
+        enc_text = self.skipthoughts_encode(sentences)
+        print('Encoding Finished')
+        n_clusters = int(np.ceil(len(enc_text)*0.1))
+        kmeans = KMeans(n_clusters=n_clusters, random_state=0)
+        kmeans = kmeans.fit(enc_text)
+        avg = []
+        closest = []
+        for j in range(n_clusters):
+            idx = np.where(kmeans.labels_ == j)[0]
+            avg.append(np.mean(idx))
+        closest, _ = pairwise_distances_argmin_min(kmeans.cluster_centers_,\
+                                                       enc_text)
+        ordering = sorted(range(n_clusters), key=lambda k: avg[k])
+        summary = ' '.join([sentences[closest[idx]] for idx in ordering])
+        print('Clustering Finished')
+        return summary
