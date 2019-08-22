@@ -13,6 +13,7 @@ import wget
 import string
 import zipfile
 import os, sys
+import numpy as np
 import pandas as pd
 import re
 
@@ -25,17 +26,16 @@ from nltk.tokenize import sent_tokenize
 from enum import Enum
 from .skipthoughts import skipthoughts
 
-import re
-
-import theano
-import theano.tensor as tensor
-
-import pickle as pkl
-import numpy as np
-import copy
-import nltk
-import scipy
 from sklearn.cluster import KMeans
+from sklearn.metrics import pairwise_distances_argmin_min
+from nltk.tokenize import sent_tokenize
+from enum import Enum
+from collections import OrderedDict, defaultdict
+from scipy.linalg import norm
+from nltk.tokenize import word_tokenize
+from sklearn.cluster import KMeans
+from sklearn.metrics import pairwise_distances_argmin_min
+from .skipthoughts import skipthoughts
 
 class SummarizationLengthStrategy(Enum):
     EXPONENTIAL = 1
@@ -84,7 +84,6 @@ class ExtractiveSummarization:
         # Train clustering algorithm
         kmeans = KMeans(n_clusters=n_clusters)
         kmeans.fit(encoded)
-
         avg = []
         for j in range(n_clusters):
             idx = np.where(kmeans.labels_ == j)[0]
