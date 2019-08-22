@@ -21,7 +21,7 @@ from annoy import AnnoyIndex
 
 from os.path import expanduser, join
 
-<<<<<<< Updated upstream
+
 import skipthoughts
 import re
 
@@ -33,11 +33,16 @@ import numpy as np
 import copy
 import nltk
 import scipy
-=======
+
 from sklearn.cluster import KMeans
 from sklearn.metrics import pairwise_distances_argmin_min
 from nltk.tokenize import sent_tokenize
 from enum import Enum
+from collections import OrderedDict, defaultdict
+from scipy.linalg import norm
+from nltk.tokenize import word_tokenize
+from sklearn.cluster import KMeans
+from sklearn.metrics import pairwise_distances_argmin_min
 from .skipthoughts import skipthoughts
 
 class SummarizationLengthStrategy(Enum):
@@ -88,13 +93,9 @@ class ExtractiveSummarization:
         # Train clustering algorithm
         kmeans = KMeans(n_clusters=n_clusters)
         kmeans.fit(encoded)
->>>>>>> Stashed changes
 
-from collections import OrderedDict, defaultdict
-from scipy.linalg import norm
-from nltk.tokenize import word_tokenize
-from sklearn.cluster import KMeans
-from sklearn.metrics import pairwise_distances_argmin_min
+
+
 
 
 class Embedding(object):
