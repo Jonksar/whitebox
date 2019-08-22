@@ -15,11 +15,13 @@ import zipfile
 import os, sys
 import numpy as np
 import pandas as pd
+import re
 
 from annoy import AnnoyIndex
 
 from os.path import expanduser, join
 
+<<<<<<< Updated upstream
 import skipthoughts
 import re
 
@@ -31,6 +33,62 @@ import numpy as np
 import copy
 import nltk
 import scipy
+=======
+from sklearn.cluster import KMeans
+from sklearn.metrics import pairwise_distances_argmin_min
+from nltk.tokenize import sent_tokenize
+from enum import Enum
+from .skipthoughts import skipthoughts
+
+class SummarizationLengthStrategy(Enum):
+    EXPONENTIAL = 1
+    LINEAR = 2
+
+
+class ExtractiveSummarization:
+    def __init__(self):
+        self._download_pretrained()
+
+        # You would need to download pre-trained models first
+        self.model = skipthoughts.load_model()
+        self.encoder = skipthoughts.Encoder(self.model)
+
+    def _download_pretrained(self):
+        skipthoughts.download_pretrained_skipthoughs()
+    
+    def preprocess_clean(self, text):
+        # Returns text with all the filtering necessary
+        text = re.sub(r'[[0-9]]', ' ', text)
+        text = re.sub(r'\n','',text)
+        text = re.sub(r'\xa0', ' ', text)
+        text = re.sub(r'[()[\]{}]',' ',text)
+        text = re.sub(r'\s+',' ',text)
+        return text
+    
+
+    def summarize(self, text, language="english", amount=0.5, length_strategy=SummarizationLengthStrategy.EXPONENTIAL):
+        assert 0. < amount < 1., "Amount should be between 0 and 1"
+        
+        # Clean odd characters
+        text = self.preprocess_clean(text)
+        
+        # Get the sentences
+        sentences = sent_tokenize(text, language=language)
+        # Find vectors
+        encoded = self.encoder.encode(sentences)
+
+        # Finding amount of sentences based on the strategy
+        if length_strategy == SummarizationLengthStrategy.EXPONENTIAL:
+            n_clusters = int(np.ceil(len(encoded) ** amount))
+        elif length_strategy == SummarizationLengthStrategy.LINEAR:
+            n_clusters = int(np.ceil(len(encoded) * amount))
+        else:
+            raise AttributeError("Summarization strategy not supported")
+
+        # Train clustering algorithm
+        kmeans = KMeans(n_clusters=n_clusters)
+        kmeans.fit(encoded)
+>>>>>>> Stashed changes
 
 from collections import OrderedDict, defaultdict
 from scipy.linalg import norm

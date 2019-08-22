@@ -26,5 +26,12 @@ setup(
         "imageio",
         "sklearn",
         "sklearn_pandas",
+<<<<<<< Updated upstream
+=======
+        "gensim",
+        "annoy",
+        "wget",
+        "nltk",
+>>>>>>> Stashed changes
     ]
 )
