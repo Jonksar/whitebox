@@ -14,11 +14,11 @@ import string
 import zipfile
 import os, sys
 import pandas as pd
+import re
 
 from annoy import AnnoyIndex
 
 from os.path import expanduser, join
-
 from sklearn.cluster import KMeans
 from sklearn.metrics import pairwise_distances_argmin_min
 from nltk.tokenize import sent_tokenize
@@ -35,13 +35,7 @@ import numpy as np
 import copy
 import nltk
 import scipy
-
-from collections import OrderedDict, defaultdict
-from scipy.linalg import norm
-from nltk.tokenize import word_tokenize
 from sklearn.cluster import KMeans
-from sklearn.metrics import pairwise_distances_argmin_min
-
 
 class SummarizationLengthStrategy(Enum):
     EXPONENTIAL = 1

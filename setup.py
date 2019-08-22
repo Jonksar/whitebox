@@ -29,5 +29,6 @@ setup(
         "gensim",
         "annoy",
         "wget",
+        "nltk",
     ]
 )
