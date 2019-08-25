@@ -36,6 +36,8 @@ from nltk.tokenize import word_tokenize
 from sklearn.cluster import KMeans
 from sklearn.metrics import pairwise_distances_argmin_min
 from .skipthoughts import skipthoughts
+import re
+
 
 class SummarizationLengthStrategy(Enum):
     EXPONENTIAL = 1
@@ -45,27 +47,30 @@ class SummarizationLengthStrategy(Enum):
 class ExtractiveSummarization:
     def __init__(self):
         self._download_pretrained()
+
+        # You would need to download pre-trained models first
         self.model = skipthoughts.load_model()
         self.encoder = skipthoughts.Encoder(self.model)
 
     def _download_pretrained(self):
         skipthoughts.download_pretrained_skipthoughs()
-
+    
     def preprocess_clean(self, text):
         # Returns text with all the filtering necessary
         text = re.sub(r'[[0-9]]', ' ', text)
-        text = re.sub(r'\n', '', text)
+        text = re.sub(r'\n','',text)
         text = re.sub(r'\xa0', ' ', text)
-        text = re.sub(r'[()[\]{}]', ' ', text)
-        text = re.sub(r'\s+', ' ', text)
+        text = re.sub(r'[()[\]{}]',' ',text)
+        text = re.sub(r'\s+',' ',text)
         return text
+    
 
     def summarize(self, text, language="english", amount=0.5, length_strategy=SummarizationLengthStrategy.EXPONENTIAL):
         assert 0. < amount < 1., "Amount should be between 0 and 1"
-
+        
         # Clean odd characters
         text = self.preprocess_clean(text)
-
+        
         # Get the sentences
         sentences = sent_tokenize(text, language=language)
         # Find vectors
@@ -82,15 +87,19 @@ class ExtractiveSummarization:
         # Train clustering algorithm
         kmeans = KMeans(n_clusters=n_clusters)
         kmeans.fit(encoded)
+
         avg = []
+        closest = []
         for j in range(n_clusters):
             idx = np.where(kmeans.labels_ == j)[0]
             avg.append(np.mean(idx))
-        closest, _ = pairwise_distances_argmin_min(kmeans.cluster_centers_, encoded)
+        closest, _ = pairwise_distances_argmin_min(kmeans.cluster_centers,
+                                                       encoded)
         ordering = sorted(range(n_clusters), key=lambda k: avg[k])
         summary = ' '.join([sentences[closest[idx]] for idx in ordering])
-
+        print('Clustering Finished')
         return summary
+
 
 class Embedding(object):
     def __init__(self):
