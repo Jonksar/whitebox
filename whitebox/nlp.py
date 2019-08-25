@@ -44,9 +44,7 @@ class SummarizationLengthStrategy(Enum):
 
 class ExtractiveSummarization:
     def __init__(self):
-
         self._download_pretrained()
-
         self.model = skipthoughts.load_model()
         self.encoder = skipthoughts.Encoder(self.model)
 
