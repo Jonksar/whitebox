@@ -2,7 +2,7 @@
   --------------------------------------------------
   File Name : utils.py
   Creation Date : 26-05-2018
-  Last Modified : Sat 26 May 2018 10:24:49 AM EEST
+  Last Modified : 2019-10-20 Sun 11:26 am
   Created By : Joonatan Samuel
   --------------------------------------------------
 """
@@ -12,6 +12,11 @@ from __future__ import print_function
 import itertools
 import time
 import sys, os
+
+def first(the_iterable, condition = lambda x: True):
+    for i in the_iterable:
+        if condition(i):
+            return i
 
 def flatten(lst):
     return [item for sublist in lst for item in sublist]
