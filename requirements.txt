@@ -6,3 +6,4 @@ termcolor
 imageio
 sklearn
 sklearn_pandas
+google_images_download
